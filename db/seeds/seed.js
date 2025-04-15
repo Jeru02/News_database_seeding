@@ -1,4 +1,5 @@
 const db = require("../connection")
+var format = require('pg-format');
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db.query(`
@@ -50,13 +51,67 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     );`)
   }).then(()=>{
 
+    //formats data to inject
+    const formattedTopicData = topicData.map((rowToinsert)=>{
+      return [rowToinsert.description, rowToinsert.slug, rowToinsert.img_url]
+    })
+
+
+    //creates insert query
+    const insertTopicQuery = format(
+      `INSERT INTO topics 
+      (slug, description, img_url)
+      VALUES %L;`, formattedTopicData)
+
+      
+
+    return db.query(insertTopicQuery)
+
+  
+
+  }).then(()=>{
+
+    //inserting user data
+    const formattedUserData = userData.map((rowToinsert)=>{
+      return [rowToinsert.username, rowToinsert.name, rowToinsert.avatar_url]
+    })
+
+    //USING PG FORMAT TO FORMAT THE DATA
+    const insertUserDataQuery = format(
+      `INSERT INTO users 
+      (username, name, avatar_url)
+      VALUES %L;`, formattedUserData)
+    return db.query(insertUserDataQuery)
+
+
+
+
+  }).then(()=>{
+
+      console.log(articleData)
+
+
+    //inserting  article data
+    const formattedArticleData = articleData.map((rowToinsert)=>{
+      return [rowToinsert.title, rowToinsert.topic, rowToinsert.author, rowToinsert.body, rowToinsert.created_at, rowToinsert.votes, rowToinsert.article_img_url]
+    })
+
+    //USING PG FORMAT TO FORMAT THE DATA
+    const insertArticleDataQuery = format(
+      `INSERT INTO articles 
+      (title, topic, author, body, created_at, votes, article_img_url)
+      VALUES %L;`, formattedArticleData)
+      
+  
+    return db.query(``)
+
     
 
 
 
-
-
-
-  }); //<< write your first query in here. // db.query is a promise with some parameters
+  });
+   //<< write your first query in here. // db.query is a promise with some parameters
+   //must return a query so we can close the db connection 
+   //in the run seed file
 };
 module.exports = seed;

@@ -7,7 +7,7 @@ const db = require('../connection.js');
 
 
 const runSeed = () => {
-  //seed(devData) returns a db query
+  //seed(devData) returns a db query which is a promise
   return seed(devData).then(() => db.end());
   //db.end ends the connection to the database
 };
