@@ -1,5 +1,7 @@
 const db = require("../connection")
 var format = require('pg-format');
+const {convertTimestampToDate} = require('./utils');
+
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db.query(`
@@ -28,32 +30,28 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
     CREATE TABLE articles (
     article_id SERIAL PRIMARY KEY,
-    title VARCHAR(40),
-    topic VARCHAR(40),
-    author VARCHAR(40),
+    title VARCHAR(100),
+    topic VARCHAR(40) REFERENCES topics(slug),
+    author VARCHAR(40) REFERENCES users(username),
     body TEXT,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     votes INT DEFAULT 0,
-    article_img_url VARCHAR(1000),
-    FOREIGN KEY (topic) REFERENCES topics(slug),
-    FOREIGN KEY (author) REFERENCES users(username)  
+    article_img_url VARCHAR(1000) 
     );
 
     CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
-    article_id INT,
+    article_id INT REFERENCES articles(article_id),
     body TEXT,
     votes INT DEFAULT 0,
-    author VARCHAR(40),
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (article_id) REFERENCES articles(article_id),
-    FOREIGN KEY (author) REFERENCES users(username)    
+    author VARCHAR(40) REFERENCES users(username),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`)
   }).then(()=>{
 
     //formats data to inject
     const formattedTopicData = topicData.map((rowToinsert)=>{
-      return [rowToinsert.description, rowToinsert.slug, rowToinsert.img_url]
+      return [rowToinsert.slug, rowToinsert.description, rowToinsert.img_url]
     })
 
 
@@ -64,7 +62,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       VALUES %L;`, formattedTopicData)
 
       
-
+      
     return db.query(insertTopicQuery)
 
   
@@ -88,24 +86,78 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
   }).then(()=>{
 
-      console.log(articleData)
+
 
 
     //inserting  article data
     const formattedArticleData = articleData.map((rowToinsert)=>{
-      return [rowToinsert.title, rowToinsert.topic, rowToinsert.author, rowToinsert.body, rowToinsert.created_at, rowToinsert.votes, rowToinsert.article_img_url]
+
+      const newRowToinsert = convertTimestampToDate(rowToinsert)
+
+      return [newRowToinsert.title, newRowToinsert.topic, newRowToinsert.author, newRowToinsert.body, newRowToinsert.created_at, newRowToinsert.votes, newRowToinsert.article_img_url]
     })
 
     //USING PG FORMAT TO FORMAT THE DATA
-    const insertArticleDataQuery = format(
+      const insertArticleDataQuery = format(
       `INSERT INTO articles 
       (title, topic, author, body, created_at, votes, article_img_url)
-      VALUES %L;`, formattedArticleData)
+      VALUES %L RETURNING *;`, formattedArticleData)
       
-  
-    return db.query(``)
+
+    return db.query(insertArticleDataQuery)
+
+
+
+  }).then((RESULT)=>{
+
+    const articles = RESULT.rows.map((row)=>{
+      let title = row.title
+      let id = row.article_id
+      return {[title]: id}
+
+    })
+
+
+
+  return articles
+
+  //insert comment data
+  // article_id field that references an article's primary key
+  // created_at - NEEDS TO BE FORMATTED
+
+  //articles has articl id and 
+
+
+
+  }).then((articles_title_id)=>{
+
+
 
     
+    
+
+    const formattedCommentData = commentData.map((rowToinsert)=>{
+
+      const newRowToinsert = convertTimestampToDate(rowToinsert)
+
+      return [articles_title_id[newRowToinsert.article_title],newRowToinsert.votes, newRowToinsert.author, newRowToinsert.created_at]
+    })
+
+    console.log(formattedCommentData)
+    //says a buch of undefines
+
+    
+
+
+    // const insertCommentDataQuery = format(
+    //   `INSERT INTO comments 
+    //   (article_id, body, votes, author, created_at)
+    //   VALUES %L;`, formattedCommentData)
+      
+
+    // return db.query(insertCommentDataQuery)
+
+
 
 
 
