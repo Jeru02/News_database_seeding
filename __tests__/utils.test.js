@@ -1,5 +1,6 @@
 const {
-  convertTimestampToDate
+  convertTimestampToDate,
+  findArticleId
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -37,4 +38,60 @@ describe("convertTimestampToDate", () => {
     expect(result).toEqual(expected);
   });
 });
+
+
+//behaviour of function 
+
+//expected input
+// >>> []
+// >>> Hi
+
+//expected output
+// >>> return undefined
+// >>> return undefined
+
+
+
+describe("findArticleId", ()=>{
+
+test("when a title that doesnt exist is passed, return undefined", ()=>{
+
+  const input = "yo yo books"
+  const inputArray = [{harry_potter: 1}]
+
+  const output = findArticleId(inputArray, input)
+
+  expect(output).toBe(undefined)
+
+})
+
+
+test("when passed a book that exists return the books id ", ()=>{
+
+  const inputArray = [{"harry potter": 1}]
+  const input = "harry potter"
+
+  const output = findArticleId(inputArray, input)
+
+  expect(output).toEqual(1)
+
+})
+
+test("when passed a book that exists in an array containing more than 1 book return its id ", ()=>{
+
+  const inputArray = [{"harry potter": 1}, {"harry potter 2": 5}, {"harry potter 3": 8}]
+  const input = "harry potter 3"
+
+  const output = findArticleId(inputArray, input)
+
+  expect(output).toEqual(8)
+
+})
+
+
+
+
+
+
+})
 

@@ -1,6 +1,6 @@
 const db = require("../connection")
 var format = require('pg-format');
-const {convertTimestampToDate} = require('./utils');
+const {convertTimestampToDate, findArticleId} = require('./utils');
 
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
@@ -49,13 +49,13 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     );`)
   }).then(()=>{
 
-    //formats data to inject
+    //formats topic data to inject
     const formattedTopicData = topicData.map((rowToinsert)=>{
       return [rowToinsert.slug, rowToinsert.description, rowToinsert.img_url]
     })
 
 
-    //creates insert query
+    //creates insert topic query
     const insertTopicQuery = format(
       `INSERT INTO topics 
       (slug, description, img_url)
@@ -80,8 +80,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       (username, name, avatar_url)
       VALUES %L;`, formattedUserData)
     return db.query(insertUserDataQuery)
-
-
 
 
   }).then(()=>{
@@ -131,32 +129,29 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
 
   }).then((articles_title_id)=>{
 
-
-
     
     
 
     const formattedCommentData = commentData.map((rowToinsert)=>{
 
-      const newRowToinsert = convertTimestampToDate(rowToinsert)
+    const newRowToinsert = convertTimestampToDate(rowToinsert)
 
-      return [articles_title_id[newRowToinsert.article_title],newRowToinsert.votes, newRowToinsert.author, newRowToinsert.created_at]
+
+
+      return [findArticleId(articles_title_id, rowToinsert.article_title),newRowToinsert.body, newRowToinsert.votes, newRowToinsert.author, newRowToinsert.created_at]
     })
-
-    console.log(formattedCommentData)
-    //says a buch of undefines
 
     
 
-
-    // const insertCommentDataQuery = format(
-    //   `INSERT INTO comments 
-    //   (article_id, body, votes, author, created_at)
-    //   VALUES %L;`, formattedCommentData)
+    const insertCommentDataQuery = format(
+      `INSERT INTO comments 
+      (article_id, body, votes, author, created_at)
+      VALUES %L;`, formattedCommentData)
       
 
-    // return db.query(insertCommentDataQuery)
+    console.log(insertCommentDataQuery)
 
+    return db.query(insertCommentDataQuery)
 
 
 
