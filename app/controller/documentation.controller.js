@@ -1,4 +1,3 @@
-const SelectEndPoint = require("../model/model");
 const endpointsJson = require("../../endpoints.json");
 
 const getApi = (req, res) => {
