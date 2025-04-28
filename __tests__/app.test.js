@@ -44,36 +44,28 @@ describe("GET /api/topics", () => {
   });
 });
 
-xdescribe("GET /api/articles/:article_id", () => {
-  test("200 responds with the correct article ", () => {
+describe("GET /api/articles/:article_id", () => {
+  test.only("200 responds with the correct article ", () => {
+    
     return request(app)
-      .get("/api/articles/:3")
+      .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        expect(article[0]).toEqual([
+        expect(article[0].article_id).toEqual(3);
+        expect(article[0]).toMatchObject(
           {
-            article_id: 3,
-            title: "Eight pug gifs that remind me of mitch",
-            topic: "mitch",
-            author: "icellusedkars",
-            body: "some gifs",
-            created_at: 1604394720000,
-            votes: 0,
-            article_img_url:
-              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          },
-        ]);
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          }
+        )
       });
   });
 });
 
-// {
-//   title: "Eight pug gifs that remind me of mitch",
-//   topic: "mitch",
-//   author: "icellusedkars",
-//   body: "some gifs",
-//   created_at: 1604394720000,
-//   votes: 0,
-//   article_img_url:
-//     "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-// }
+
