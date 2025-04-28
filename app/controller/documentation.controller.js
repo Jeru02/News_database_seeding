@@ -1,7 +1,7 @@
-const SelectEndPoint = require("../model/model");
+const endpointsJson = require("../../endpoints.json");
 
 const getApi = (req, res) => {
-  res.status(200).send({ endpoints: SelectEndPoint() });
+  res.status(200).send({ endpoints: endpointsJson });
 };
 
 module.exports = { getApi };
