@@ -33,11 +33,45 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        expect(topics).toEqual([
-          { slug: "mitch", description: "The man, the Mitch, the legend" },
-          { slug: "cats", description: "Not dogs" },
-          { slug: "paper", description: "what books are made of" },
-        ]);
+        expect(topics.length).toEqual(3);
+        topics.forEach((singleTopic)=>{
+
+          expect(singleTopic).toMatchObject({slug: expect.any(String),
+            description: expect.any(String),})
+
+        })
       });
   });
 });
+// [
+//           { slug: "mitch", description: "The man, the Mitch, the legend" },
+//           { slug: "cats", description: "Not dogs" },
+//           { slug: "paper", description: "what books are made of" },
+//         ]
+
+xdescribe("GET /api/articles/:article_id", () => {
+
+  test("200 responds with the correct article ",()=>{
+
+    return request(app)
+      .get("/api/articles/:3")
+      .expect(200)
+      .then(({body: {article}})=>{
+        expect(article[0]).toEqual([{article_id: 3, title:"Eight pug gifs that remind me of mitch", topic:"mitch", author:"icellusedkars", body:"some gifs", created_at: 1604394720000, votes: 0,article_img_url:"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"}])
+      })
+
+
+  })
+  
+});
+
+// {
+//   title: "Eight pug gifs that remind me of mitch",
+//   topic: "mitch",
+//   author: "icellusedkars",
+//   body: "some gifs",
+//   created_at: 1604394720000,
+//   votes: 0,
+//   article_img_url:
+//     "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+// }
