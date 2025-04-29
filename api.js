@@ -14,12 +14,20 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.use((err, req, res, next) => {
-  // forced errors
-  res
-    .status(400)
-    .send({
-      msg: "400 Bad request: make sure you are sending a parameter of type number",
+  // forced error
+  if (err.status && err.msg) {
+    res.status(err.status).send({
+      msg: err.msg,
     });
+  }
+
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res.status(400).send({
+    msg: "400 Bad request: make sure you are sending a parameter of type number",
+  });
 });
 
 module.exports = app;

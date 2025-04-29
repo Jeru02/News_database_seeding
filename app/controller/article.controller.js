@@ -6,7 +6,6 @@ const getArticleById = (req, res, next) => {
       res.status(200).send({ article: result.rows });
     })
     .catch((err) => {
-        
       next(err);
     });
 };

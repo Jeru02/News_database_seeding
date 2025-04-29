@@ -67,7 +67,7 @@ describe("GET /api/articles/:article_id", () => {
   //enter a number out of index
   //enter an invalid type e.g string
   describe("GET /api/articles/:article_id error handling", () => {
-    test.only("respond with a 400 bad request when a request is made with a type other than a number", () => {
+    test("respond with a 400 bad request when a request is made with a type other than a number", () => {
       return request(app)
         .get("/api/articles/hiii")
         .expect(400)
@@ -75,6 +75,15 @@ describe("GET /api/articles/:article_id", () => {
           expect(msg).toBe(
             "400 Bad request: make sure you are sending a parameter of type number"
           );
+        });
+    });
+
+    test("respond with a 404 not found, when an out if index article_id is sent", () => {
+      return request(app)
+        .get("/api/articles/90000")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found: id 90000 is out of range");
         });
     });
   });
