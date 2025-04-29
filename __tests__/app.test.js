@@ -45,7 +45,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test.only("200 responds with the correct article ", () => {
+  test("200 responds with the correct article ", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
@@ -79,7 +79,7 @@ describe("GET /api/articles/:article_id", () => {
         });
     });
 
-    test("respond with a 404 not found, when an out if index article_id is sent", () => {
+    test("respond with a 404 not found, when an out of index article_id is sent", () => {
       return request(app)
         .get("/api/articles/90000")
         .expect(404)
@@ -91,7 +91,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test("200 responds with a articles object ", () => {
+  test.only("200 responds with a articles object ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)

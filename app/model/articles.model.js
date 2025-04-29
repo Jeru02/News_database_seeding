@@ -15,4 +15,26 @@ const selectArticleById = (id) => {
     });
 };
 
-module.exports = { selectArticleById };
+const selectArticles = () => {
+  db.query(`SELECT * FROM Articles ;`).then(async (result) => {
+    const countPromises = [];
+
+    result.rows.forEach((singleArticle) => {
+      countPromises.push(
+        db
+          .query(
+            `SELECT COUNT FROM Articles WHERE article_id = ${singleArticle};`
+          )
+          .then((result2) => {
+            return result2.rows[0].count;
+          })
+      );
+    });
+
+   return Promise.all(countPromises)
+  });
+
+ 
+};
+
+module.exports = { selectArticleById, selectArticles };
