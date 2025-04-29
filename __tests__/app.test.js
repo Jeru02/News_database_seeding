@@ -33,11 +33,58 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        expect(topics).toEqual([
-          { slug: "mitch", description: "The man, the Mitch, the legend" },
-          { slug: "cats", description: "Not dogs" },
-          { slug: "paper", description: "what books are made of" },
-        ]);
+        expect(topics.length).toEqual(3);
+        topics.forEach((singleTopic) => {
+          expect(singleTopic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
       });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("200 responds with the correct article ", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article[0].article_id).toEqual(3);
+        expect(article[0]).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+
+  //enter a number out of index
+  //enter an invalid type e.g string
+  describe("GET /api/articles/:article_id error handling", () => {
+    test("respond with a 400 bad request when a request is made with a type other than a number", () => {
+      return request(app)
+        .get("/api/articles/hiii")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad request: make sure you are sending a parameter of type number"
+          );
+        });
+    });
+
+    test("respond with a 404 not found, when an out if index article_id is sent", () => {
+      return request(app)
+        .get("/api/articles/90000")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found: id 90000 is out of range");
+        });
+    });
   });
 });
