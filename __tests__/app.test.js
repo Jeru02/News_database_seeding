@@ -45,11 +45,12 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("200 responds with the correct article ", () => {
+  test.only("200 responds with the correct article ", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
+        console.log(article)
         expect(article[0].article_id).toEqual(3);
         expect(article[0]).toMatchObject({
           article_id: expect.any(Number),
@@ -86,5 +87,28 @@ describe("GET /api/articles/:article_id", () => {
           expect(msg).toBe("Not found: id 90000 is out of range");
         });
     });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("200 responds with a articles object ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toEqual(13);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
   });
 });
