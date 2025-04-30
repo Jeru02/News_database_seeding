@@ -4,6 +4,7 @@ const app = require("../api");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+require('jest-sorted');
 /* Set up your test imports here */
 
 /* Set up your beforeEach & afterAll functions here */
@@ -50,6 +51,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
+        console.log(article)
         expect(article[0].article_id).toEqual(3);
         expect(article[0]).toMatchObject({
           article_id: expect.any(Number),
@@ -78,7 +80,7 @@ describe("GET /api/articles/:article_id", () => {
         });
     });
 
-    test("respond with a 404 not found, when an out if index article_id is sent", () => {
+    test("respond with a 404 not found, when an out of index article_id is sent", () => {
       return request(app)
         .get("/api/articles/90000")
         .expect(404)
@@ -86,5 +88,30 @@ describe("GET /api/articles/:article_id", () => {
           expect(msg).toBe("Not found: id 90000 is out of range");
         });
     });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test.only("200 responds with a articles object in decending order by date ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toEqual(13);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+        console.log(articles)
+        expect(articles).toBeSortedBy("created_at", { descending: true })
+      });
   });
 });
