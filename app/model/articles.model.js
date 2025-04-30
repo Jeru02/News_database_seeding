@@ -16,25 +16,20 @@ const selectArticleById = (id) => {
 };
 
 const selectArticles = () => {
-  db.query(`SELECT * FROM Articles ;`).then(async (result) => {
-    const countPromises = [];
+  return db
+    .query(
+      `SELECT articles.article_id, articles.author, articles title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count 
+    FROM articles
+    LEFT JOIN comments ON 
+    comments.article_id = articles.article_id
+    GROUP BY articles.article_id;`
+    )
+    .then((result) => {
+      console.log(result.rows);
 
-    result.rows.forEach((singleArticle) => {
-      countPromises.push(
-        db
-          .query(
-            `SELECT COUNT FROM Articles WHERE article_id = ${singleArticle};`
-          )
-          .then((result2) => {
-            return result2.rows[0].count;
-          })
-      );
+      return result;
     });
-
-   return Promise.all(countPromises)
-  });
-
- 
 };
 
 module.exports = { selectArticleById, selectArticles };
+
