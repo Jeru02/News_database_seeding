@@ -4,7 +4,7 @@ const app = require("../api");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
-require('jest-sorted');
+require("jest-sorted");
 /* Set up your test imports here */
 
 /* Set up your beforeEach & afterAll functions here */
@@ -51,7 +51,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        console.log(article)
+        console.log(article);
         expect(article[0].article_id).toEqual(3);
         expect(article[0]).toMatchObject({
           article_id: expect.any(Number),
@@ -92,7 +92,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test.only("200 responds with a articles object in decending order by date ", () => {
+  test("200 responds with a articles object in decending order by date ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -110,19 +110,31 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(String),
           });
         });
-        console.log(articles)
-        expect(articles).toBeSortedBy("created_at", { descending: true })
+        console.log(articles);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 
-
-  describe("GET /api/articles error handling",()=>{
-
-    test("1st error",()=>{
-
-
-
-      
-    })
-  })
+  describe("GET /api/articles/:article_id/comments", () => {
+    test.only("200: responds with all the comments for a particular article", () => {
+      return request(app)
+        .get("/api/articles/3/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(2);
+          comments.forEach((singleComment) => {
+            expect(singleComment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            });
+          });
+        });
+    });
+  });
 });
+// SELECT * FROM comments WHERE article_id = 3;
+//
