@@ -116,7 +116,7 @@ describe("GET /api/articles", () => {
   });
 
   describe("GET /api/articles/:article_id/comments", () => {
-    test.only("200: responds with all the comments for a particular article", () => {
+    test("200: responds with all the comments for a particular article", () => {
       return request(app)
         .get("/api/articles/3/comments")
         .expect(200)
@@ -134,7 +134,39 @@ describe("GET /api/articles", () => {
           });
         });
     });
+
+    describe("GET /api/articles/:article_id/comments error handling", () => {
+      test("respond with a 400 bad request when a request is made with a type other than a number", () => {
+        return request(app)
+          .get("/api/articles/hello/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "400 Bad request: make sure you are sending a parameter of type number"
+            );
+          });
+      });
+      test("respond with a 404 notfound when a request is made with a type other than a number", () => {
+        return request(app)
+          .get("/api/articles/900000/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "404 Not found: no article was found with id: 900000"
+            );
+          });
+      });
+    });
   });
 });
+
 // SELECT * FROM comments WHERE article_id = 3;
 //
+// {
+//   return request(app)
+//     .get("/api/articles/90000")
+//     .expect(404)
+//     .then(({ body: { msg } }) => {
+//       expect(msg).toBe("Not found: id 90000 is out of range");
+//     });
+// });
