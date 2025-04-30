@@ -4,6 +4,7 @@ const app = require("../api");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+require('jest-sorted');
 /* Set up your test imports here */
 
 /* Set up your beforeEach & afterAll functions here */
@@ -91,7 +92,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles", () => {
-  test.only("200 responds with a articles object ", () => {
+  test.only("200 responds with a articles object in decending order by date ", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -109,6 +110,8 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(String),
           });
         });
+        console.log(articles)
+        expect(articles).toBeSortedBy("created_at", { descending: true })
       });
   });
 });
