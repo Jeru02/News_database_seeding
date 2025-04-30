@@ -114,4 +114,15 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true })
       });
   });
+
+
+  describe("GET /api/articles error handling",()=>{
+
+    test("1st error",()=>{
+
+
+
+      
+    })
+  })
 });
