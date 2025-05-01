@@ -4,7 +4,8 @@ const ENV = process.env.NODE_ENV || "development";
 
 require("dotenv").config({ path: `${__dirname}/../.env.${ENV}` });
 
-//loads the environment vaibles in the .env file
+//loads the environment vaibles in the .env file of production/ test / developmemnt
+const config = {};
 
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL;
@@ -12,7 +13,6 @@ if (ENV === "production") {
 }
 
 // const db = new Pool();
-const config = {};
 
 module.exports = new Pool(config);
 // module.exports = db;
