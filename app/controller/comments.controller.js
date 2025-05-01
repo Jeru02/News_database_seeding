@@ -14,13 +14,21 @@ const getCommentsByArticleId = (req, res, next) => {
     });
 };
 
-const postCommentByArticleId = (req, res) => {
+const postCommentByArticleId = (req, res, next) => {
   const username = req.body.username;
   const body = req.body.body;
   const id = parseInt(req.params.article_id);
 
+  
   insertCommentByArticleId(username, body, id).then((result) => {
+
+    
     res.status(201).send({ comment: result.rows[0] });
+  }).catch((err)=>{
+
+
+    next(err)
+
   });
 };
 
