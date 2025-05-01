@@ -1,4 +1,8 @@
-const { selectCommentsByArticleId } = require("../model/comments.model");
+const { parse } = require("dotenv");
+const {
+  selectCommentsByArticleId,
+  insertCommentByArticleId,
+} = require("../model/comments.model");
 
 const getCommentsByArticleId = (req, res, next) => {
   selectCommentsByArticleId(req.params.article_id)
@@ -10,4 +14,14 @@ const getCommentsByArticleId = (req, res, next) => {
     });
 };
 
-module.exports = { getCommentsByArticleId };
+const postCommentByArticleId = (req, res) => {
+  const username = req.body.username;
+  const body = req.body.body;
+  const id = parseInt(req.params.article_id);
+
+  insertCommentByArticleId(username, body, id).then((result) => {
+    res.status(201).send({ comment: result.rows[0] });
+  });
+};
+
+module.exports = { getCommentsByArticleId, postCommentByArticleId };
