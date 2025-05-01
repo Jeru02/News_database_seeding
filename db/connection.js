@@ -12,10 +12,7 @@ if (ENV === "production") {
   config.max = 2;
 }
 
-// const db = new Pool();
-
 module.exports = new Pool(config);
-// module.exports = db;
 
 //error handling
 if (!process.env.PGDATABASE) {
