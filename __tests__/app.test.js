@@ -160,13 +160,83 @@ describe("GET /api/articles", () => {
   });
 });
 
-// SELECT * FROM comments WHERE article_id = 3;
-//
-// {
-//   return request(app)
-//     .get("/api/articles/90000")
-//     .expect(404)
-//     .then(({ body: { msg } }) => {
-//       expect(msg).toBe("Not found: id 90000 is out of range");
-//     });
-// });
+describe("Post /api/articles/:article_id/comments", () => {
+  test("201: responds with the newly posted comment", () => {
+    //arrange
+    const newComment = {
+      username: "icellusedkars",
+      body: "congrats on the new job Tom!",
+    };
+    //act
+    return (
+      request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        //assert
+        .expect(201)
+        .then(({ body: { comment } }) => {
+          expect(comment.author).toBe("icellusedkars");
+          expect(comment.body).toBe("congrats on the new job Tom!");
+        })
+    );
+  });
+
+  describe("POST /api/articles/:article_id/comments error handling", () => {
+    test("400: when a request is made with a type other than a number", () => {
+      const newComment = {
+        username: "icellusedkars",
+        body: "congrats on the new job Tom!",
+      };
+      return (
+        request(app)
+          .post("/api/articles/yoo/comments")
+          .send(newComment)
+          //assert
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "400 Bad request: make sure you are sending a parameter of type number"
+            );
+          })
+      );
+    });
+
+    test("404: when a request is made with an out of bound id", () => {
+      const newComment = {
+        username: "icellusedkars",
+        body: "congrats on the new job Tom!",
+      };
+      return (
+        request(app)
+          .post("/api/articles/90000/comments")
+          .send(newComment)
+          //assert
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "404 not found: no article was found with id: 90000, post attempt failed"
+            );
+          })
+      );
+    });
+
+    test("404: when a request is made with a user that does not exist", () => {
+      const newComment = {
+        username: "Jeru",
+        body: "congrats on the new job Tom!",
+      };
+      return (
+        request(app)
+          .post("/api/articles/3/comments")
+          .send(newComment)
+          //assert
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "404 not found: no user was found with username: Jeru, post attempt failed"
+            );
+          })
+      );
+    });
+  });
+});

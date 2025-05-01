@@ -9,7 +9,7 @@ const {
 } = require("./app/controller/article.controller");
 
 const {
-  getCommentsByArticleId,
+  getCommentsByArticleId, postCommentByArticleId
 } = require("./app/controller/comments.controller");
 
 app.use(express.json());
@@ -23,6 +23,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
 
 
