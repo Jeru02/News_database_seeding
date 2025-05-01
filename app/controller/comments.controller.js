@@ -19,17 +19,20 @@ const postCommentByArticleId = (req, res, next) => {
   const body = req.body.body;
   const id = parseInt(req.params.article_id);
 
-  
-  insertCommentByArticleId(username, body, id).then((result) => {
-
-    
-    res.status(201).send({ comment: result.rows[0] });
-  }).catch((err)=>{
-
-
-    next(err)
-
-  });
+  if (body === "") {
+    next({
+      status: 400,
+      msg: `400 Bad request: no body provided`,
+    });
+  } else {
+    insertCommentByArticleId(username, body, id)
+      .then((result) => {
+        res.status(201).send({ comment: result.rows[0] });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 module.exports = { getCommentsByArticleId, postCommentByArticleId };

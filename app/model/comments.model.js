@@ -17,8 +17,8 @@ const selectCommentsByArticleId = (id) => {
 };
 
 const insertCommentByArticleId = (username, body, id) => {
+  //check if article exists
   return db
-    //check if article exists
     .query(`SELECT * FROM Articles WHERE  article_id = $1`, [id])
     .then((result) => {
       if (result.rows.length === 0) {
@@ -39,6 +39,7 @@ const insertCommentByArticleId = (username, body, id) => {
           }
         });
     })
+
     .then(() => {
       return db.query(
         `INSERT INTO comments (article_id, body, author) VALUES($1, $2, $3) RETURNING *;`,

@@ -201,6 +201,25 @@ describe("Post /api/articles/:article_id/comments", () => {
       );
     });
 
+    test("400: when a request with no body", () => {
+      const newComment = {
+        username: "icellusedkars",
+        body: "",
+      };
+      return (
+        request(app)
+          .post("/api/articles/3/comments")
+          .send(newComment)
+          //assert
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "400 Bad request: no body provided"
+            );
+          })
+      );
+    });
+
     test("404: when a request is made with an out of bound id", () => {
       const newComment = {
         username: "icellusedkars",
