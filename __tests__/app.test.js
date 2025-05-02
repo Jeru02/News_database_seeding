@@ -213,9 +213,7 @@ describe("Post /api/articles/:article_id/comments", () => {
           //assert
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe(
-              "400 Bad request: no body provided"
-            );
+            expect(msg).toBe("400 Bad request: no body provided");
           })
       );
     });
@@ -257,5 +255,77 @@ describe("Post /api/articles/:article_id/comments", () => {
           })
       );
     });
+  });
+});
+
+describe("PATCH: /api/articles/:article_id", () => {
+  test.only("201: update vote atribute", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        return article[0].votes;
+      })
+      .then((votesBefore) => {
+        return request(app)
+          .patch("/api/articles/3")
+          .send({ inc_votes: 9 })
+          .expect(201)
+          .then(({ body: { updatedArticle } }) => {
+            expect(updatedArticle[0].votes).toBe(votesBefore + 9);
+          });
+      });
+  });
+
+  describe("PATCH: /api/articles/:article_id error handling", () => {
+    test("404: article not found when sent out of bound index", () => {
+      return request(app)
+        .patch("/api/articles/90000")
+        .send({ inc_votes: 9 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Not found: id 90000 is out of range, patch attemp failed"
+          );
+        });
+    });
+
+    test("400: article not valid type", () => {
+      return request(app)
+        .patch("/api/articles/yooo")
+        .send({ inc_votes: 9 })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad request: make sure you are sending a parameter of type number"
+          );
+        });
+    });
+
+
+    test("404: request is made with no votes", () => {
+      return request(app)
+        .patch("/api/articles/3")
+        .send({ time: "10 oclock" })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "404 not found: invalid patch request, make sure you are sending an object with the correct key 'inc_votes' with a Number as the value"
+          );
+        });
+    });
+
+    test("404: request is made with object containing wrong data type", () => {
+      return request(app)
+        .patch("/api/articles/3")
+        .send({ inc_votes: "10 oclock" })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "404 not found: invalid patch request, make sure you are sending an object with the correct key 'inc_votes' with a Number as the value"
+          );
+        });
+    });
+
   });
 });
