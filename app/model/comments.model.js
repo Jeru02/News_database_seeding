@@ -48,10 +48,21 @@ const insertCommentByArticleId = (username, body, id) => {
     });
 };
 
-
-const deleteFromComments = (commentId)=>{
-
-return db.query(`DELETE FROM Comments WHERE comment_id = $1 RETURNING *;`,[commentId])
-
-}
-module.exports = { selectCommentsByArticleId, insertCommentByArticleId, deleteFromComments };
+const deleteFromComments = (commentId) => {
+  return db.query(`DELETE FROM Comments WHERE comment_id = $1 RETURNING *;`, [
+    commentId,
+  ]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `404 Not found: comment id: ${commentId} is out of range, delete attempt failed`
+      });
+    }
+    return result;
+  });;
+};
+module.exports = {
+  selectCommentsByArticleId,
+  insertCommentByArticleId,
+  deleteFromComments,
+};

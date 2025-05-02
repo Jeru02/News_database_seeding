@@ -329,20 +329,51 @@ describe("PATCH: /api/articles/:article_id", () => {
 });
 
 describe("DELETE: /api/comments/:comment_id", () => {
-  test.only("204: successfull deletion", () => {
-    return request(app)
-      .delete("/api/comments/3")
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
+  test("204: checks for successfull deletion", () => {
+    return db
+      .query("SELECT COUNT(*) FROM COMMENTS")
+      .then((result) => {
+        return result.rows[0].count;
+      })
+      .then((totalBeforeDeletion) => {
+        return request(app)
+          .delete("/api/comments/3")
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).toEqual({});
+          })
+          .then(() => {
+            return db.query("SELECT COUNT(*) FROM COMMENTS").then((result) => {
+              const totalAfterDeletion = result.rows[0].count;
+              expect(parseInt(totalAfterDeletion)).toEqual(
+                parseInt(totalBeforeDeletion) - 1
+              );
+            });
+          });
       });
   });
 
   describe("DELETE: /api/comments/:comment_id error handling", () => {
-    //comment somehow not deleted check code for that
-    //after deltion we make a get rrequest for the comment
+    test("404: when trying to delete a comment which isnt found ", () => {
+      return request(app)
+        .delete("/api/comments/9000")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "404 Not found: comment id: 9000 is out of range, delete attempt failed"
+          );
+        });
+    });
 
-    //we check that the ength of the comments has decreassed by 1 to show only one has been deleted
-    test("", () => {});
+    test("400: when trying to delete a comment at an invaid datatype  ", () => {
+      return request(app)
+        .delete("/api/comments/yooo")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad request: make sure you are sending a parameter of type number"
+          );
+        });
+    });
   });
 });
