@@ -2,6 +2,7 @@ const { parse } = require("dotenv");
 const {
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  deleteFromComments,
 } = require("../model/comments.model");
 
 const getCommentsByArticleId = (req, res, next) => {
@@ -35,4 +36,15 @@ const postCommentByArticleId = (req, res, next) => {
   }
 };
 
-module.exports = { getCommentsByArticleId, postCommentByArticleId };
+const deleteCommentByCommentId = (req, res) => {
+  const commentId = req.params.comment_id;
+  deleteFromComments(commentId).then((result) => {
+    res.status(204).send();
+  });
+};
+
+module.exports = {
+  getCommentsByArticleId,
+  postCommentByArticleId,
+  deleteCommentByCommentId,
+};

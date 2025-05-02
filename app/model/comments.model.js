@@ -47,4 +47,11 @@ const insertCommentByArticleId = (username, body, id) => {
       );
     });
 };
-module.exports = { selectCommentsByArticleId, insertCommentByArticleId };
+
+
+const deleteFromComments = (commentId)=>{
+
+return db.query(`DELETE FROM Comments WHERE comment_id = $1 RETURNING *;`,[commentId])
+
+}
+module.exports = { selectCommentsByArticleId, insertCommentByArticleId, deleteFromComments };

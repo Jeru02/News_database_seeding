@@ -259,7 +259,7 @@ describe("Post /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH: /api/articles/:article_id", () => {
-  test.only("201: update vote atribute", () => {
+  test("201: update vote atribute", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
@@ -302,7 +302,6 @@ describe("PATCH: /api/articles/:article_id", () => {
         });
     });
 
-
     test("404: request is made with no votes", () => {
       return request(app)
         .patch("/api/articles/3")
@@ -326,6 +325,24 @@ describe("PATCH: /api/articles/:article_id", () => {
           );
         });
     });
+  });
+});
 
+describe("DELETE: /api/comments/:comment_id", () => {
+  test.only("204: successfull deletion", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+
+  describe("DELETE: /api/comments/:comment_id error handling", () => {
+    //comment somehow not deleted check code for that
+    //after deltion we make a get rrequest for the comment
+
+    //we check that the ength of the comments has decreassed by 1 to show only one has been deleted
+    test("", () => {});
   });
 });
