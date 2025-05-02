@@ -379,11 +379,12 @@ describe("DELETE: /api/comments/:comment_id", () => {
 });
 
 describe("GET /api/users", () => {
-  test.only("200: responds with an array of all the users", () => {
+  test("200: responds with an array of all the users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
       .then(({ body: { users } }) => {
+        console.log(users);
         expect(users.length).toBe(4);
         users.forEach((singleUser) => {
           expect(singleUser).toMatchObject({
@@ -393,5 +394,46 @@ describe("GET /api/users", () => {
           });
         });
       });
+  });
+});
+
+describe("GET /api/articles (sorting queries)", () => {
+  //already a test above to test sortby defaults to  created_at and order defaults to descending
+  test("200: for a querie sorting by votes in ASC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=ASC")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+
+        expect(articles).toBeSortedBy("votes", { descending: false });
+      });
+  });
+
+  describe("GET /api/articles (sorting queries) error handling", () => {
+    test("GET /api/articles sorting by a collumn that does not exist", () => {
+      return request(app)
+        .get("/api/articles?sort_by=food&order=ASC")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("400 Bad request: column does not exist");
+        });
+    });
+
+     test("GET /api/articles sorting by value other than ASC or DESC", () => {
+      //finish test
+    });
   });
 });
