@@ -89,7 +89,7 @@
         }
       ]
     }
-}, "PATCH: /api/articles/:article_id error handling": {
+}, "PATCH: /api/articles/:article_id": {
 
     "description": "updates the votes on an article, for exmaple article_id starts with 0 votes, but after the patchh request its updated by 9",
     "exampleResponse": {
@@ -103,6 +103,12 @@
           "created_at": "2020-06-20T07:24:00.000Z"
         }
       ]
+    }
+}, "DELETE: /api/comments/:comment_id": {
+
+    "description": "deleted comment by comment id if id is valid and in the data set",
+    "exampleResponse": {
+      "updatedArticle": "no response just a 204 confirmation"
     }
 }
 }

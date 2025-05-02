@@ -259,7 +259,7 @@ describe("Post /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH: /api/articles/:article_id", () => {
-  test.only("201: update vote atribute", () => {
+  test("201: update vote atribute", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
@@ -302,7 +302,6 @@ describe("PATCH: /api/articles/:article_id", () => {
         });
     });
 
-
     test("404: request is made with no votes", () => {
       return request(app)
         .patch("/api/articles/3")
@@ -326,6 +325,55 @@ describe("PATCH: /api/articles/:article_id", () => {
           );
         });
     });
+  });
+});
 
+describe("DELETE: /api/comments/:comment_id", () => {
+  test("204: checks for successfull deletion", () => {
+    return db
+      .query("SELECT COUNT(*) FROM COMMENTS")
+      .then((result) => {
+        return result.rows[0].count;
+      })
+      .then((totalBeforeDeletion) => {
+        return request(app)
+          .delete("/api/comments/3")
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).toEqual({});
+          })
+          .then(() => {
+            return db.query("SELECT COUNT(*) FROM COMMENTS").then((result) => {
+              const totalAfterDeletion = result.rows[0].count;
+              expect(parseInt(totalAfterDeletion)).toEqual(
+                parseInt(totalBeforeDeletion) - 1
+              );
+            });
+          });
+      });
+  });
+
+  describe("DELETE: /api/comments/:comment_id error handling", () => {
+    test("404: when trying to delete a comment which isnt found ", () => {
+      return request(app)
+        .delete("/api/comments/9000")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "404 Not found: comment id: 9000 is out of range, delete attempt failed"
+          );
+        });
+    });
+
+    test("400: when trying to delete a comment at an invaid datatype  ", () => {
+      return request(app)
+        .delete("/api/comments/yooo")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad request: make sure you are sending a parameter of type number"
+          );
+        });
+    });
   });
 });

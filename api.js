@@ -6,11 +6,13 @@ const { getTopics } = require("./app/controller/topics.controller");
 const {
   getArticleById,
   getArticles,
-  patchVotesByArticleId
+  patchVotesByArticleId,
 } = require("./app/controller/article.controller");
 
 const {
-  getCommentsByArticleId, postCommentByArticleId
+  getCommentsByArticleId,
+  postCommentByArticleId,
+  deleteCommentByCommentId,
 } = require("./app/controller/comments.controller");
 
 app.use(express.json());
@@ -27,10 +29,9 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
-app.patch("/api/articles/:article_id", patchVotesByArticleId)
+app.patch("/api/articles/:article_id", patchVotesByArticleId);
 
-
-
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 app.use((err, req, res, next) => {
   // forced error
