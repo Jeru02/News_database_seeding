@@ -432,8 +432,16 @@ describe("GET /api/articles (sorting queries)", () => {
         });
     });
 
-     test("GET /api/articles sorting by value other than ASC or DESC", () => {
+    test("GET /api/articles sorting by value other than ASC or DESC", () => {
       //finish test
+      return request(app)
+        .get("/api/articles?sort_by=food&order=iii")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "400 Bad request: can only order by eirther DESC or ASC"
+          );
+        });
     });
   });
 });

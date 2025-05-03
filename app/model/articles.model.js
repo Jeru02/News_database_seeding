@@ -16,15 +16,13 @@ const selectArticleById = (id) => {
 };
 
 const selectArticles = (sortBy, order) => {
-if (sortBy === undefined){
-  sortBy = "created_at"
-}
-if (order === undefined){
-  order = "DESC"
-}
+  if (sortBy === undefined) {
+    sortBy = "created_at";
+  }
+  if (order === undefined) {
+    order = "DESC";
+  }
 
-console.log(sortBy, "<--------")
-  
   return db
     .query(
       `SELECT articles.article_id, articles.author, articles title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count 

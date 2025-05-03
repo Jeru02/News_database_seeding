@@ -22,7 +22,6 @@ const postCommentByArticleId = (req, res, next) => {
 
   if (body === "") {
     next({
-      //is there a better place i can hanfle this 400
       status: 400,
       msg: `400 Bad request: no body provided`,
     });
