@@ -1,114 +1,119 @@
 {
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
-  },
-  "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
-  },
-  "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
+    "GET /api": {
+        "description": "serves up a json representation of all the available endpoints of the api"
+    },
+    "GET /api/topics": {
+        "description": "serves an array of all topics",
+        "queries": [],
+        "exampleResponse": {
+            "topics": [
+                {
+                    "slug": "football",
+                    "description": "Footie!"
+                }
+            ]
         }
-      ]
-    }
-  }, 
-  "GET /api/articles/:article_id": {
-
-    "description": "returns an article with the specific article id if it exists",
-    "exampleResponse": {
-      "article": [
-        {
-          "article_id": 1,
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
-          "created_at": 1594329060000,
-          "votes": 100,
-          "article_img_url":
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    },
+    "GET /api/articles": {
+        "description": "serves an array of all articles",
+        "queries": [{"sort_by":"votes"},{"order":"ASC"} ],
+        "exampleResponse": {
+            "articles": [
+                {
+                    "title": "Seafood substitutions are increasing",
+                    "topic": "cooking",
+                    "author": "weegembump",
+                    "created_at": "2018-05-30T15:59:13.341Z",
+                    "votes": 0,
+                    "comment_count": 6
+                }
+            ]
         }
-      ]
-    }
-
-  }, "GET /api/articles/:article_id/comments": {
-
-    "description": "returns all the comments for a specific article",
-    "exampleResponse": {
-      "commenmts": [
-        {
-          "comment_id": 10,
-          "article_id": 3,
-          "body": "git push origin master",
-          "votes": 0,
-          "author": "icellusedkars",
-          "created_at": "2020-06-20T07:24:00.000Z"
-        },
-        {
-          "comment_id": 11,
-          "article_id": 3,
-          "body": "Ambidextrous marsupial",
-          "votes": 0,
-          "author": "icellusedkars",
-          "created_at": "2020-09-19T23:10:00.000Z"
+    },
+    "GET /api/articles/:article_id": {
+        "description": "returns an article with the specific article id if it exists",
+        "exampleResponse": {
+            "article": [
+                {
+                    "article_id": 1,
+                    "title": "Living in the shadow of a great man",
+                    "topic": "mitch",
+                    "author": "butter_bridge",
+                    "body": "I find this existence challenging",
+                    "created_at": 1594329060000,
+                    "votes": 100,
+                    "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+                }
+            ]
         }
-      ]
-    }
-},"GET /api/articles/:article_id/comments": {
-
-    "description": "returns all the comments for a specific article",
-    "exampleResponse": {
-      "commenmts": [
-        {
-          "comment_id": 10,
-          "article_id": 3,
-          "body": "git push origin master",
-          "votes": 0,
-          "author": "icellusedkars",
-          "created_at": "2020-06-20T07:24:00.000Z"
-        },
-        {
-          "comment_id": 11,
-          "article_id": 3,
-          "body": "Ambidextrous marsupial",
-          "votes": 0,
-          "author": "icellusedkars",
-          "created_at": "2020-09-19T23:10:00.000Z"
+    },
+    "GET /api/articles/:article_id/comments": {
+        "description": "returns all the comments for a specific article",
+        "exampleResponse": {
+            "commenmts": [
+                {
+                    "comment_id": 10,
+                    "article_id": 3,
+                    "body": "git push origin master",
+                    "votes": 0,
+                    "author": "icellusedkars",
+                    "created_at": "2020-06-20T07:24:00.000Z"
+                },
+                {
+                    "comment_id": 11,
+                    "article_id": 3,
+                    "body": "Ambidextrous marsupial",
+                    "votes": 0,
+                    "author": "icellusedkars",
+                    "created_at": "2020-09-19T23:10:00.000Z"
+                }
+            ]
         }
-      ]
-    }
-}, "PATCH: /api/articles/:article_id": {
-
-    "description": "updates the votes on an article, for exmaple article_id starts with 0 votes, but after the patchh request its updated by 9",
-    "exampleResponse": {
-      "updatedArticle": [
-        {
-          "comment_id": 10,
-          "article_id": 3,
-          "body": "git push origin master",
-          "votes": 9,
-          "author": "icellusedkars",
-          "created_at": "2020-06-20T07:24:00.000Z"
+    },
+    "PATCH: /api/articles/:article_id": {
+        "description": "updates the votes on an article, for exmaple article_id starts with 0 votes, but after the patchh request its updated by 9",
+        "exampleResponse": {
+            "updatedArticle": [
+                {
+                    "comment_id": 10,
+                    "article_id": 3,
+                    "body": "git push origin master",
+                    "votes": 9,
+                    "author": "icellusedkars",
+                    "created_at": "2020-06-20T07:24:00.000Z"
+                }
+            ]
         }
-      ]
+    },
+    "DELETE: /api/comments/:comment_id": {
+        "description": "deleted comment by comment id if id is valid and in the data set",
+        "exampleResponse": {
+            "updatedArticle": "no response just a 204 confirmation"
+        }
+    },
+    "GET: /api/users": {
+        "description": "returns all users",
+        "exampleResponse": [
+            {
+                "username": "butter_bridge",
+                "name": "jonny",
+                "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+            },
+            {
+                "username": "icellusedkars",
+                "name": "sam",
+                "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+            },
+            {
+                "username": "rogersop",
+                "name": "paul",
+                "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+            },
+            {
+                "username": "lurker",
+                "name": "do_nothing",
+                "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+            }
+        ]
     }
-}, "DELETE: /api/comments/:comment_id": {
-
-    "description": "deleted comment by comment id if id is valid and in the data set",
-    "exampleResponse": {
-      "updatedArticle": "no response just a 204 confirmation"
-    }
-}
 }

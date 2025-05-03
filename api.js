@@ -53,6 +53,14 @@ app.use((err, req, res, next) => {
     res.status(400).send({
       msg: "400 Bad request: make sure you are sending a parameter of type number",
     });
+  } else if (err.code === "42703") {
+    res.status(400).send({
+      msg: "400 Bad request: column does not exist",
+    });
+  } else if (err.code === "42601") {
+    res.status(400).send({
+      msg: "400 Bad request: can only order by eirther DESC or ASC",
+    });
   }
 });
 
