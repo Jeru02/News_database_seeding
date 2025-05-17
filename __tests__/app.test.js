@@ -51,7 +51,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        console.log(article);
+        
         expect(article[0].article_id).toEqual(3);
         expect(article[0]).toMatchObject({
           article_id: expect.any(Number),
@@ -110,7 +110,6 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(String),
           });
         });
-        console.log(articles);
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -384,7 +383,6 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body: { users } }) => {
-        console.log(users);
         expect(users.length).toBe(4);
         users.forEach((singleUser) => {
           expect(singleUser).toMatchObject({
@@ -445,3 +443,36 @@ describe("GET /api/articles (sorting queries)", () => {
     });
   });
 });
+
+describe("200: GET /api/articles (topic query)", () => {
+  test("returns a list of all the articles with the topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(1);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+
+      });
+  });
+});
+
+
+describe("ERROR handling for GET /api/articles (topic query)",()=>{
+
+//potential errors 
+
+
+ 
+})

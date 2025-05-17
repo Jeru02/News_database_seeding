@@ -15,15 +15,14 @@ const getArticleById = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
+  const query = req.query.topic;
   const sortBy = req.query.sort_by;
   const order = req.query.order;
-  console.log(sortBy, order);
-  selectArticles(sortBy, order)
+  selectArticles(sortBy, order, query)
     .then((result) => {
       res.status(200).send({ articles: result.rows });
     })
     .catch((err) => {
-      console.log(err)
       next(err);
     });
 };

@@ -15,7 +15,8 @@ const selectArticleById = (id) => {
     });
 };
 
-const selectArticles = (sortBy, order) => {
+const selectArticles = (sortBy, order, query) => {
+  //where topic = cats
   if (sortBy === undefined) {
     sortBy = "created_at";
   }
@@ -23,18 +24,22 @@ const selectArticles = (sortBy, order) => {
     order = "DESC";
   }
 
-  return db
-    .query(
-      `SELECT articles.article_id, articles.author, articles title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count 
-    FROM articles
-    LEFT JOIN comments ON 
-    comments.article_id = articles.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.${sortBy} ${order};`
-    )
-    .then((result) => {
-      return result;
-    });
+  const queryStringA =
+    "SELECT articles.article_id, articles.author, articles title, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id";
+
+  let queryStringB = "";
+
+  if (query !== undefined) {
+    queryStringB = ` WHERE topic = '${query}' `;
+  }
+
+  const queryStringC = ` GROUP BY articles.article_id
+    ORDER BY articles.${sortBy} ${order};`;
+
+
+  return db.query(queryStringA + queryStringB + queryStringC).then((result) => {
+    return result;
+  });
 };
 
 const updateArticlebyVotes = (incVotes, id) => {
