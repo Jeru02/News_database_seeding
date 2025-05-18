@@ -7,7 +7,7 @@ const {
 const getArticleById = (req, res, next) => {
   selectArticleById(req.params.article_id)
     .then((result) => {
-      res.status(200).send({ article: result.rows });
+      res.status(200).send({ article: result.rows[0] });
     })
     .catch((err) => {
       next(err);
@@ -41,7 +41,8 @@ const patchVotesByArticleId = (req, res, next) => {
   const id = req.params.article_id;
   updateArticlebyVotes(incVotes, id)
     .then((result) => {
-      res.status(201).send({ updatedArticle: result.rows });
+      
+      res.status(201).send({ updatedArticle: result.rows[0] });
     })
     .catch((err) => {
       next(err);
