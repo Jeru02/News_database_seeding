@@ -5,9 +5,6 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 require("jest-sorted");
-/* Set up your test imports here */
-
-/* Set up your beforeEach & afterAll functions here */
 
 beforeEach(() => {
   return seed(data);
@@ -51,9 +48,8 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        console.log(article);
-        expect(article[0].article_id).toEqual(3);
-        expect(article[0]).toMatchObject({
+        expect(article.article_id).toEqual(3);
+        expect(article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
@@ -66,8 +62,6 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  //enter a number out of index
-  //enter an invalid type e.g string
   describe("GET /api/articles/:article_id error handling", () => {
     test("respond with a 400 bad request when a request is made with a type other than a number", () => {
       return request(app)
@@ -110,7 +104,6 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(String),
           });
         });
-        console.log(articles);
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -162,12 +155,11 @@ describe("GET /api/articles", () => {
 
 describe("Post /api/articles/:article_id/comments", () => {
   test("201: responds with the newly posted comment", () => {
-    //arrange
     const newComment = {
       username: "icellusedkars",
       body: "congrats on the new job Tom!",
     };
-    //act
+
     return (
       request(app)
         .post("/api/articles/3/comments")
@@ -264,7 +256,7 @@ describe("PATCH: /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        return article[0].votes;
+        return article.votes;
       })
       .then((votesBefore) => {
         return request(app)
@@ -272,7 +264,7 @@ describe("PATCH: /api/articles/:article_id", () => {
           .send({ inc_votes: 9 })
           .expect(201)
           .then(({ body: { updatedArticle } }) => {
-            expect(updatedArticle[0].votes).toBe(votesBefore + 9);
+            expect(updatedArticle.votes).toBe(votesBefore + 9);
           });
       });
   });
@@ -384,7 +376,6 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body: { users } }) => {
-        console.log(users);
         expect(users.length).toBe(4);
         users.forEach((singleUser) => {
           expect(singleUser).toMatchObject({
@@ -398,7 +389,6 @@ describe("GET /api/users", () => {
 });
 
 describe("GET /api/articles (sorting queries)", () => {
-  //already a test above to test sortby defaults to  created_at and order defaults to descending
   test("200: for a querie sorting by votes in ASC", () => {
     return request(app)
       .get("/api/articles?sort_by=votes&order=ASC")
@@ -433,7 +423,6 @@ describe("GET /api/articles (sorting queries)", () => {
     });
 
     test("GET /api/articles sorting by value other than ASC or DESC", () => {
-      //finish test
       return request(app)
         .get("/api/articles?sort_by=food&order=iii")
         .expect(400)
@@ -443,5 +432,79 @@ describe("GET /api/articles (sorting queries)", () => {
           );
         });
     });
+  });
+});
+
+describe("200: GET /api/articles (topic query)", () => {
+  test("returns a list of all the articles with the topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(1);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("when no topic is sent as a query, all articles are sent", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+describe("ERROR handling for GET /api/articles (topic query)", () => {
+  test("send a query for a topic that doesnt exist ", () => {
+    return request(app)
+      .get("/api/articles?topic=peanut")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found: topic does not exist");
+      });
+  });
+});
+
+describe("200 response ", () => {
+  test("send a query for a topic that doesnt exist ", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        });
+      });
   });
 });
