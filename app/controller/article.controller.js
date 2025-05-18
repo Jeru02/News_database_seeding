@@ -18,11 +18,14 @@ const getArticles = (req, res, next) => {
   const query = req.query.topic;
   const sortBy = req.query.sort_by;
   const order = req.query.order;
+
   selectArticles(sortBy, order, query)
     .then((result) => {
+      
       res.status(200).send({ articles: result.rows });
     })
     .catch((err) => {
+      
       next(err);
     });
 };

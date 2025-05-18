@@ -51,7 +51,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/3")
       .expect(200)
       .then(({ body: { article } }) => {
-        
         expect(article[0].article_id).toEqual(3);
         expect(article[0]).toMatchObject({
           article_id: expect.any(Number),
@@ -463,16 +462,59 @@ describe("200: GET /api/articles (topic query)", () => {
             comment_count: expect.any(String),
           });
         });
-
+      });
+  });
+  test("when no topic is sent as a query, all articles are sent", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13);
+        articles.forEach((singleArticle) => {
+          expect(singleArticle).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
       });
   });
 });
 
+describe("ERROR handling for GET /api/articles (topic query)", () => {
+  //invalid query so the collum does not exist
+  test("send a query for a topic that doesnt exist ", () => {
+    return request(app)
+      .get("/api/articles?topic=peanut")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("404 Not Found: topic does not exist");
+      });
+  });
+});
 
-describe("ERROR handling for GET /api/articles (topic query)",()=>{
-
-//potential errors 
-
-
- 
-})
+describe("200 response ", () => {
+  //invalid query so the collum does not exist
+  test("send a query for a topic that doesnt exist ", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article[0]).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        });
+      });
+  });
+});
